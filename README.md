@@ -18,7 +18,7 @@ This library based on https://github.com/isayme/go-amqp-reconnect, but also supp
 Another methods call through aliases with mutex, to avoid race condition
 
 ## How to change existing code
-1. Add import `import "github.com/AsidStorm/go-amqp-reconnect/rabbitmq"`
+1. Add import `import "github.com/imbagila/go-amqp-reconnect/rabbitmq"`
 2. Replace `amqp.Connection`/`amqp.Channel` with `rabbitmq.Connection`/`rabbitmq.Channel`!
 
 ## Debug

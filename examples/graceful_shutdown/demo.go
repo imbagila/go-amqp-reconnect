@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/AsidStorm/go-amqp-reconnect/rabbitmq"
+	"github.com/imbagila/go-amqp-reconnect/rabbitmq"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 

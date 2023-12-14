@@ -1,4 +1,4 @@
-module github.com/imbagila/go-amqp-reconnect/rabbitmq
+module github.com/imbagila/go-amqp-reconnect
 
 go 1.21.5
 

@@ -3,17 +3,18 @@
 Auto reconnecting library for https://github.com/rabbitmq/amqp091-go, that doesn't reconnect on server shutdown
 to simply developers, here is auto reconnect wrap with detail comments.
 
-This library based on https://github.com/isayme/go-amqp-reconnect, but also supports some external methods from https://github.com/AsidStorm/go-amqp-reconnect.
+This library based on https://github.com/isayme/go-amqp-reconnect and https://github.com/sirius1024/go-amqp-reconnect but also supports some external methods from https://github.com/AsidStorm/go-amqp-reconnect.
 
 ## Methods
 
 1. `rabbitmq.Dial(url)` & `rabbitmq.DialConfig(url, config)` - creates connection with reconnect
-2. `connection.Channel()` - creates channel with reconnect
-3. `connection.Close()` - clearly closes channel without reconnect
-4. `channel.Qos()` - restore settings for channel
-5. `channel.QueueDeclare()` & `channel.QueueDeclarePassive()` - restore autoDeleted queues
-6. `channel.ExchangeDeclare()` & `channel.ExchangeDeclarePassive()` - restores autoDeleted exchanges
-7. `channel.Close()` - clearly closes channel without reconnect
+2. `rabbitmq.DialCluster(urls)` - creates cluster urls connection with reconnect 
+3. `connection.Channel()` - creates channel with reconnect
+4. `connection.Close()` - clearly closes channel without reconnect
+5. `channel.Qos()` - restore settings for channel
+6. `channel.QueueDeclare()` & `channel.QueueDeclarePassive()` - restore autoDeleted queues
+7. `channel.ExchangeDeclare()` & `channel.ExchangeDeclarePassive()` - restores autoDeleted exchanges
+8. `channel.Close()` - clearly closes channel without reconnect
 
 Another methods call through aliases with mutex, to avoid race condition
 

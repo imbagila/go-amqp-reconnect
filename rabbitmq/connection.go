@@ -110,6 +110,55 @@ func Dial(url string) (*Connection, error) {
 	return c, nil
 }
 
+// DialCluster with reconnect
+// this function is based on https://github.com/sirius1024/go-amqp-reconnect
+func DialCluster(urls []string) (*Connection, error) {
+	nodeSequence := 0
+	conn, err := amqp.Dial(urls[nodeSequence])
+	if err != nil {
+		return nil, err
+	}
+
+	c := &Connection{
+		Connection: conn,
+		mutex:      &sync.Mutex{},
+	}
+
+	go func(urls []string, seq *int) {
+		for {
+			reason, ok := <-c.Connection.NotifyClose(make(chan *amqp.Error))
+			if !ok {
+				debugf("connection closed")
+				break
+			}
+			debugf("connection closed, reason: %v", reason)
+
+			// reconnect with another node of cluster
+			for {
+				time.Sleep(ReconnectDelay)
+
+				newSeq := next(urls, *seq)
+				*seq = newSeq
+
+				conn, err := amqp.Dial(urls[newSeq])
+				if err != nil {
+					debugf("reconnect failed, err: %v", err)
+					continue
+				}
+
+				c.mutex.Lock()
+				c.Connection = conn
+				c.mutex.Unlock()
+
+				debugf("reconnect success")
+				break
+			}
+		}
+	}(urls, &nodeSequence)
+
+	return c, nil
+}
+
 func (c *Connection) Channel() (*Channel, error) {
 	defer c.mutex.Unlock()
 	c.mutex.Lock()
@@ -287,4 +336,16 @@ func (c *Connection) IsClosed() bool {
 
 func (c *Connection) isClosed() bool {
 	return atomic.LoadInt32(&c.closed) == 1
+}
+
+// Next element index of slice
+func next(s []string, lastSeq int) int {
+	length := len(s)
+	if length == 0 || lastSeq == length-1 {
+		return 0
+	} else if lastSeq < length-1 {
+		return lastSeq + 1
+	} else {
+		return -1
+	}
 }
